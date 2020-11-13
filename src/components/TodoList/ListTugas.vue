@@ -36,9 +36,11 @@
                 
             </v-card-title>
 
-            <v-data-table :headers="headers" 
+            <v-data-table
+                        :headers="headers" 
                         :items="todos" 
                         :search="search"
+                        :urut="urut"
                         :single-expand="singleExpand"
                         :expanded.sync="expanded"
                         item-key="task"
@@ -50,15 +52,18 @@
                         <v-toolbar-title>Expandable Table</v-toolbar-title>
                         <v-spacer></v-spacer>
                         <v-switch
-                        v-model="singleExpand"
-                        label="Single expand"
-                        class="mt-2"
+                            v-model="singleExpand"
+                            label="Single expand"
+                            class="mt-2"
                         ></v-switch>
                     </v-toolbar>
                 </template>
+                <template v-slot:[`item.checks`]="{ item }">
+                    <v-checkbox multiple :key="item" @click.capture.stop="selected(item)"/>
+                </template>
                 <template v-slot:expanded-item="{ headers, item }">
                     <td :colspan="headers.length">
-                        <br><h2>Note: </h2><br>
+                        <br><h2> Note: </h2><br>
                         {{ item.note }}
                         <br><br>
                     </td>
@@ -78,7 +83,28 @@
                 </template>
             </v-data-table>
         </v-card>
-
+        <br>
+        <v-card v-if="hapus==true">
+            <v-card-title>
+                <h4>Delete Multiple</h4>
+            </v-card-title>
+            <v-list-item v-for="(item,i) in kepilih" :key="i">
+                <v-list-item-content>
+                    <v-list-item-title>{{item.task}}</v-list-item-title>
+                </v-list-item-content>
+            </v-list-item>
+            <template>
+                <v-row
+                    align="center"
+                    justify="space-around"
+                >
+                    <v-btn small depressed color="error" elevation="11" class="ma-2" @click="deleteAll">
+                    Hapus Semua
+                    </v-btn>
+                </v-row>
+            </template>
+        </v-card>
+        
         <v-dialog v-model="dialog" persistent max-width="600px">
             <v-card>
                 <v-card-title>
@@ -145,7 +171,10 @@
             return {
                 expanded: [],
                 urut: "",
+                hapus: false,
                 singleExpand: false,
+                singleSelect: false,
+                kepilih:[],
                 isEditing:false,
                 deleteDialog:false,
                 detailDialog:false,
@@ -153,6 +182,7 @@
                 dialog: false,
                 temp: null,
                 headers: [
+                    { text: "", value: "checks" },
                     { text: "", value: "data-table-expand" },
                     {
                         text: "Task",
@@ -190,7 +220,7 @@
 
                 urutkan: {
                     priority: null
-                }
+                },
             };
         },
 
@@ -238,6 +268,15 @@
                 this.todos.splice(this.todos.indexOf(this.temp),1);
                 this.cancel();
             },
+            selected(item){
+                if(this.kepilih.includes(item)){
+                    this.kepilih.splice(this.kepilih.indexOf(item),1);
+                    this.hapus=false
+                }else{
+                    this.hapus=true
+                    this.kepilih.push(item);
+                }
+            },
             sorted: function(urut){
                 function compare(a,b){
                     if(urut == "Penting"){
@@ -262,7 +301,15 @@
                     }
                 }
                 return this.todos.sort(compare);
-            }
+            },
+            deleteAll(){
+                var selected = this.kepilih.slice(0);
+
+                for (var i = 0; i < selected.length; ++i) {
+                    this.todos.splice( this.todos.indexOf(this.kepilih[i]), 1)
+                }
+                this.kepilih=null
+            },
         },
     };
 </script>
