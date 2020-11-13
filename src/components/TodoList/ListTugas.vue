@@ -294,7 +294,7 @@
                             return -1;
                         if(a.priority == "Penting")
                             return 1;
-                        if(a.priority == "Biasa" && b.priority=="Tidak Penting")
+                        if(a.priority == "Biasa" && b.priority=="Tidak penting")
                             return 1;
                         if(a.priority == "Biasa" && b.priority=="Penting")
                             return 0;
