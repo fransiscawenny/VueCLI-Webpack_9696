@@ -84,13 +84,13 @@
             </v-data-table>
         </v-card>
         <br>
-        <v-card v-if="hapus==true">
+        <v-card>
             <v-card-title>
                 <h4>Delete Multiple</h4>
             </v-card-title>
             <v-list-item v-for="(item,i) in kepilih" :key="i">
                 <v-list-item-content>
-                    <v-list-item-title>{{item.task}}</v-list-item-title>
+                    <v-list-item-title>- {{item.task}}</v-list-item-title>
                 </v-list-item-content>
             </v-list-item>
             <template>
@@ -271,7 +271,6 @@
             selected(item){
                 if(this.kepilih.includes(item)){
                     this.kepilih.splice(this.kepilih.indexOf(item),1);
-                    this.hapus=false
                 }else{
                     this.hapus=true
                     this.kepilih.push(item);
@@ -308,7 +307,9 @@
                 for (var i = 0; i < selected.length; ++i) {
                     this.todos.splice( this.todos.indexOf(this.kepilih[i]), 1)
                 }
-                this.kepilih=null
+                for(var i = 0; i < selected.length; ++i){
+                    this.kepilih.splice(this.kepilih.indexOf(this.kepilih),1)
+                }
             },
         },
     };
