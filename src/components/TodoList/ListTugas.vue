@@ -84,7 +84,7 @@
             </v-data-table>
         </v-card>
         <br>
-        <v-card>
+        <v-card v-if="kepilih.length">
             <v-card-title>
                 <h4>Delete Multiple</h4>
             </v-card-title>
@@ -271,6 +271,7 @@
             selected(item){
                 if(this.kepilih.includes(item)){
                     this.kepilih.splice(this.kepilih.indexOf(item),1);
+                    this.hapus=false
                 }else{
                     this.hapus=true
                     this.kepilih.push(item);
